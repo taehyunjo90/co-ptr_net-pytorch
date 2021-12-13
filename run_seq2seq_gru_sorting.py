@@ -1,8 +1,9 @@
 import torch
 import torch.optim as optim
-from seq2seq import Seq2Seq
 
-from sort_data import fixed_batch
+from model.seq2seq_gru import Seq2SeqGRU
+from data.sort_data import fixed_batch
+
 
 if __name__ == "__main__":
     input_feature_size = 1
@@ -11,7 +12,7 @@ if __name__ == "__main__":
     hidden_size = 512
 
     cuda = torch.device('cuda')
-    seq2seq = Seq2Seq(1, hidden_size, seq_len).cuda()
+    seq2seq = Seq2SeqGRU(1, hidden_size, seq_len).cuda()
 
     optimizer = optim.Adam(seq2seq.parameters())
 
