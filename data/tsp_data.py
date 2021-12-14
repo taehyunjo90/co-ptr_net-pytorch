@@ -37,6 +37,23 @@ def get_tsp_data(path):
     return torch.Tensor(total_x), torch.LongTensor(total_y)
 
 
+def tsp_iterator_with_variable_length(batch_size, is_train=True, low_len=5, high_len=10):
+    total_data_by_len = {}
+    for len in range(low_len, high_len + 1):
+        file = rf"co_data/tsp_all_len{len}.txt"
+        d = get_tsp_data(file)
+        total_data_by_len[len] = d
+    
+    while True:
+        sel_len = random.randint(low_len, high_len)
+        sel_data = total_data_by_len[sel_len]
+        if is_train:
+            i = random.randint(0, 80000)
+        else:
+            i = random.randint(80000 + 1, sel_data[0].size(0) - batch_size)
+        yield sel_data[0][i:i+batch_size], sel_data[1][i:i+batch_size]
+
+
 def tsp_iterator(batch_size, is_train=True):
     if is_train:
         total_x, total_y = get_tsp_data(r"co_data/tsp5.txt")
@@ -51,7 +68,11 @@ def tsp_iterator(batch_size, is_train=True):
 
 
 if __name__ == '__main__':
-    for x_batch, y_batch in tsp_iterator(64, is_train=False):
-        print(x_batch, y_batch)
-        break
+    # for x_batch, y_batch in tsp_iterator(64, is_train=False):
+    #     print(x_batch, y_batch)
+    #     break
+
+    for x_batch, y_batch in tsp_iterator_with_variable_length(64):
+        print(x_batch.shape, y_batch.shape)
+
     

@@ -3,7 +3,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 import random
-from data.sort_data import fixed_batch
 
 
 class EncoderPTRGRU(nn.Module):
@@ -30,10 +29,8 @@ class DecoderPTRGRU(nn.Module):
 
 
 class PtrNetGRU(nn.Module):
-    def __init__(self, input_feature_size, hidden_size, attention_unit_size, choice_size):
+    def __init__(self, input_feature_size, hidden_size, attention_unit_size):
         super(PtrNetGRU, self).__init__()
-
-        self._choice_size = choice_size
 
         self.encoder = EncoderPTRGRU(input_feature_size, hidden_size)
         self.decoder = DecoderPTRGRU(input_feature_size, hidden_size)
@@ -43,16 +40,21 @@ class PtrNetGRU(nn.Module):
         self.v = nn.Linear(attention_unit_size, 1, bias=False)
 
     def forward(self, x, y, teacher_force_ratio=0.0):
+        choice_size = y.size(1)
         batch_size = x.size(0)
+        
         enc_out, hidden = self.encoder.forward(x)
 
         loss = 0
 
-        dec_in = torch.full((batch_size, 1, x.size(2)), 0.0).cuda() # start_token
+        dec_in = torch.full((batch_size, 1, x.size(2)), 0.0) # start_token
+        if x.is_cuda:
+            dec_in = dec_in.cuda()
+
 
         preds = []
 
-        for i in range(self._choice_size):
+        for i in range(choice_size):
             dec_out, hidden = self.decoder(dec_in, hidden)
 
             prob = (self.w1(enc_out) + self.w2(dec_out))
@@ -71,4 +73,4 @@ class PtrNetGRU(nn.Module):
             preds.append(predictions.reshape(predictions.size(0), -1))
 
         preds = torch.cat(preds, dim=1)
-        return preds, loss / batch_size / self._choice_size
+        return preds, loss / batch_size / choice_size
