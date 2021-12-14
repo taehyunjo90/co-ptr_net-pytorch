@@ -1,8 +1,8 @@
 ## Outline
 
-It is implementation of pointer network papar. (https://arxiv.org/abs/1506.03134)
+It is pytorch implementation of pointer network papar. (https://arxiv.org/abs/1506.03134)
 
-In addition to the Pointer Network proposed on this paper, I implement a basic sequential model called Seq2seq.  You can see the difference between the two models that metioned in the paper. 
+In addition to the Pointer Network, I implement a basic sequential model called Seq2seq.  You can see the differences metioned in the paper between the two models. 
 
 For the convenience of implementation, the GRU model is used instead of the LSTM model. 
 
@@ -10,7 +10,7 @@ For the convenience of implementation, the GRU model is used instead of the LSTM
 
 ## Seq2Seq Model vs Pointer Network
 
-![image-20211213190504710](C:\Users\TerryJo\AppData\Roaming\Typora\typora-user-images\image-20211213190504710.png)
+![image-20211213190504710](https://github.com/taehyunjo90/co-ptr_net-pytorch/blob/master/image-20211213190504710.png)
 
 
 
@@ -46,7 +46,9 @@ Through the pointer network structure proposed in this paper, these two shortcom
 
 ## How to run this code
 
-There are two problem situations in this code repo.
+There are two CO problem situations in this repo.
+
+
 
 1. Sorting
 
@@ -54,9 +56,14 @@ There are two problem situations in this code repo.
 
    Run "run_seq2seq_gru_sorting.py" or "run_ptrnet_gru_sorting.py" 
 
+   
+
 2. TSP
 
    You have to download TSP train and test set file, which is introduced in the paper. You can download data from http://goo.gl/NDcOIG. You need put the downloaded data to "co_data" folder.
+
+   - tsp5_test.txt, tsp5.txt are needed for fixed length tsp problem to train seq2seq.
+   - tsp_all_len5.txt ~ tsp_all_len20.txt are needed for variable length tsp problem to train pointer network.
 
    Run "run_seq2seq_gru_tsp.py" or "run_ptrnet_gru_tsp.py" 
 
